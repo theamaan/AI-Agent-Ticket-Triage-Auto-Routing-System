@@ -1,0 +1,25 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background: #f0f2f5;
+}
+
+.site-layout-background {
+  background: #fff;
+}
+
+/* Priority tag colours */
+.priority-p1 { background: #fff1f0 !important; color: #cf1322 !important; border-color: #ffa39e !important; }
+.priority-p2 { background: #fff7e6 !important; color: #d46b08 !important; border-color: #ffd591 !important; }
+.priority-p3 { background: #e6f4ff !important; color: #0958d9 !important; border-color: #91caff !important; }
+.priority-p4 { background: #f6ffed !important; color: #389e0d !important; border-color: #b7eb8f !important; }
+
+/* Status badge colours */
+.status-auto { background: #f6ffed; color: #389e0d; border: 1px solid #b7eb8f; border-radius: 4px; padding: 2px 8px; font-size: 12px; }
+.status-flagged { background: #fff7e6; color: #d46b08; border: 1px solid #ffd591; border-radius: 4px; padding: 2px 8px; font-size: 12px; }
+.status-held { background: #fff1f0; color: #cf1322; border: 1px solid #ffa39e; border-radius: 4px; padding: 2px 8px; font-size: 12px; }

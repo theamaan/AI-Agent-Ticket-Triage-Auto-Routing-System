@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; padding: 0; }
+    .container { max-width: 720px; margin: 30px auto; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .header { background: #fa8c16; color: white; padding: 24px 32px; }
+    .header h1 { margin: 0; font-size: 20px; }
+    .header p { margin: 4px 0 0; opacity: 0.85; font-size: 14px; }
+    .body { padding: 32px; }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th { background: #f5f5f5; text-align: left; padding: 10px 12px; color: #555; font-weight: 600; border-bottom: 2px solid #e8e8e8; }
+    td { padding: 10px 12px; border-bottom: 1px solid #f0f0f0; color: #333; }
+    tr:last-child td { border-bottom: none; }
+    .footer { background: #fafafa; border-top: 1px solid #f0f0f0; padding: 16px 32px; font-size: 12px; color: #aaa; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>⚠ Manual Review Required</h1>
+      <p>{{ tickets | length }} ticket(s) could not be auto-routed with high confidence.</p>
+    </div>
+    <div class="body">
+      <table>
+        <thead>
+          <tr>
+            <th>Ticket ID</th>
+            <th>Summary</th>
+            <th>AI Category</th>
+            <th>Priority</th>
+            <th>Confidence</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for t in tickets %}
+          <tr>
+            <td>{{ t.ticket_id }}</td>
+            <td>{{ t.summary[:60] }}{% if t.summary | length > 60 %}…{% endif %}</td>
+            <td>{{ t.ai_category }}</td>
+            <td>{{ t.ai_priority }}</td>
+            <td>{{ "%.0f%%" | format(t.final_confidence * 100) }}</td>
+            <td>{{ t.routing_status }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="footer">
+      Please log in to the Ticket Triage Portal and review these tickets in the Review Queue.
+    </div>
+  </div>
+</body>
+</html>
