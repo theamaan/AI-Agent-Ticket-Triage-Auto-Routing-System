@@ -37,12 +37,12 @@
         <tbody>
           {% for t in tickets %}
           <tr>
-            <td>{{ t.ticket_id }}</td>
-            <td>{{ t.summary[:60] }}{% if t.summary | length > 60 %}…{% endif %}</td>
-            <td>{{ t.ai_category }}</td>
-            <td>{{ t.ai_priority }}</td>
-            <td>{{ "%.0f%%" | format(t.final_confidence * 100) }}</td>
-            <td>{{ t.routing_status }}</td>
+            <td>{{ t.get('Ticket_ID', t.get('ticket_id', '')) }}</td>
+            <td>{% set s = t.get('Summary', t.get('summary', '')) %}{{ s[:60] }}{% if s | length > 60 %}…{% endif %}</td>
+            <td>{{ t.get('AI_Category', t.get('ai_category', '')) }}</td>
+            <td>{{ t.get('AI_Priority', t.get('ai_priority', '')) }}</td>
+            <td>{% set c = t.get('Final_Confidence', t.get('final_confidence', 0)) %}{{ "%.0f%%" | format(c * 100) }}</td>
+            <td>{{ t.get('Routing_Status', t.get('routing_status', '')) }}</td>
           </tr>
           {% endfor %}
         </tbody>

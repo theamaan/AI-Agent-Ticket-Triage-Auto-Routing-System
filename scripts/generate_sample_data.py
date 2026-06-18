@@ -183,7 +183,7 @@ def main() -> None:
     out_dir = Path("data")
     out_dir.mkdir(exist_ok=True)
 
-    rows = [build_row(i) for i in range(1, 351)]
+    rows = [build_row(i) for i in range(1, 51)]
     df = pd.DataFrame(rows)
 
     path = out_dir / "sample_tickets.xlsx"

@@ -9,6 +9,7 @@ import logging
 from datetime import datetime
 from typing import Any
 
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.agents.classifier_agent import ClassifierAgent
@@ -99,13 +100,15 @@ class Orchestrator:
                 logger.error("Failed to process ticket %s: %s", ticket.get("Ticket_ID"), exc)
                 results.append({**ticket, "Routing_Status": "Error", "Email_Sent": False})
 
-        # Send flagged digest if any flagged/held tickets
+        # Send flagged digest only when a minority of tickets need review
+        # (if the majority are flagged, the ML model likely isn't trained yet)
         flagged = [r for r in results if r.get("Routing_Status") in ("Flagged", "Held")]
-        if flagged:
-            # Send digest to first team lead email found
+        flagged_pct = len(flagged) / len(results) if results else 0
+        if flagged and flagged_pct < 0.5:
+            digest_sample = flagged[:20]  # cap digest at 20 tickets per email
             lead_emails = {r.get("Team_Lead_Email") for r in flagged if r.get("Team_Lead_Email")}
             for lead_email in lead_emails:
-                email_service.send_flagged_digest(lead_email, flagged)
+                email_service.send_flagged_digest(lead_email, digest_sample)
 
         return results
 
@@ -114,11 +117,22 @@ class Orchestrator:
         session: AsyncSession,
         results: list[dict],
     ) -> list[Ticket]:
-        """Save enriched ticket results to the database."""
+        """Upsert enriched ticket results — skips tickets already in the database."""
+        # Load all existing ticket_ids in one query to avoid N+1 and UNIQUE violations
+        incoming_ids = [r.get("Ticket_ID", "") for r in results]
+        existing_result = await session.execute(
+            select(Ticket.ticket_id).where(Ticket.ticket_id.in_(incoming_ids))
+        )
+        existing_ids = {row[0] for row in existing_result.all()}
+
         db_tickets = []
         for r in results:
+            tid = r.get("Ticket_ID", "")
+            if tid in existing_ids:
+                logger.debug("Skipping duplicate ticket_id: %s", tid)
+                continue
             ticket = Ticket(
-                ticket_id=r.get("Ticket_ID", ""),
+                ticket_id=tid,
                 date=str(r.get("Date", "")),
                 summary=r.get("Summary", ""),
                 description=r.get("Description", ""),
@@ -141,5 +155,6 @@ class Orchestrator:
             session.add(ticket)
             db_tickets.append(ticket)
 
-        await session.commit()
+        if db_tickets:
+            await session.commit()
         return db_tickets

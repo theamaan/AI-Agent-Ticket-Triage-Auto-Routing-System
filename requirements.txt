@@ -1,23 +1,23 @@
 # ── Core API ─────────────────────────────────────────────────────────────────
-fastapi==0.111.0
-uvicorn[standard]==0.29.0
+fastapi==0.115.12
+uvicorn[standard]==0.34.0
 python-multipart==0.0.9
 
 # ── Config ────────────────────────────────────────────────────────────────────
-pydantic-settings==2.2.1
-pydantic==2.7.1
+pydantic==2.11.7
+pydantic-settings==2.10.1
 python-dotenv==1.0.1
 
 # ── Database (SQLite locally; swap DATABASE_URL to PostgreSQL on Azure) ───────
-sqlalchemy==2.0.30
+sqlalchemy==2.0.41
 aiosqlite==0.20.0
 alembic==1.13.1
 
 # ── ML / Data ─────────────────────────────────────────────────────────────────
-scikit-learn==1.4.2
-pandas==2.2.2
+scikit-learn==1.7.0
+pandas==2.2.3
 openpyxl==3.1.2
-numpy==1.26.4
+numpy==2.2.6
 joblib==1.4.2
 
 # ── HTTP client (Ollama calls) ────────────────────────────────────────────────
