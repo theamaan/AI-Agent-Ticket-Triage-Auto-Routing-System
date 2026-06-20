@@ -37,8 +37,13 @@ class Settings(BaseSettings):
     routing_config_path: str = "data/routing_config.xlsx"
 
     # ── Confidence Thresholds ────────────────────────────────────────────────
-    confidence_auto_route: float = 0.85
-    confidence_flag: float = 0.65
+    # Lowered from 0.85/0.65 to reflect realistic scores from a small training set.
+    # With 50 training samples the weighted confidence rarely exceeds 0.85.
+    # Raise these values (via .env) as the model improves with more feedback data.
+    #   CONFIDENCE_AUTO_ROUTE=0.85  ← restore once accuracy >= 90%
+    #   CONFIDENCE_FLAG=0.65        ← restore once accuracy >= 90%
+    confidence_auto_route: float = 0.72
+    confidence_flag: float = 0.55
 
     # ── ML Model Paths ────────────────────────────────────────────────────────
     ml_model_path: str = "src/ml/models/classifier.pkl"

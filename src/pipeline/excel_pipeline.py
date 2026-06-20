@@ -17,12 +17,25 @@ REQUIRED_COLUMNS = {"Summary", "Description"}
 
 OUTPUT_COLUMNS = [
     "Ticket_ID", "Date", "Summary", "Description", "Reporter",
-    "Category", "Priority", "Assigned_Team", "Status",
-    # AI-added columns
-    "AI_Category", "AI_Priority", "Assigned_Team_AI", "Assigned_To",
-    "Assignee_Email", "ML_Confidence", "LLM_Confidence", "Final_Confidence",
+    # Original values and AI predictions side-by-side for easy comparison
+    "Category", "AI_Category",
+    "Priority", "AI_Priority",
+    "Assigned_Team", "Assigned_Team_AI",
+    "Status",
+    "Assigned_To", "Assignee_Email",
+    "ML_Confidence", "LLM_Confidence", "Final_Confidence",
     "Routing_Status", "Email_Sent",
 ]
+
+# Human-readable column headers for the downloaded Excel
+COLUMN_HEADERS = {
+    "Category":        "Original_Category",
+    "AI_Category":     "AI_Category",
+    "Priority":        "Original_Priority",
+    "AI_Priority":     "AI_Priority",
+    "Assigned_Team":   "Original_Team",
+    "Assigned_Team_AI":"AI_Assigned_Team",
+}
 
 
 def read_tickets(file_bytes: bytes, filename: str = "upload.xlsx") -> list[dict]:
@@ -63,6 +76,9 @@ def write_enriched_excel(results: list[dict]) -> bytes:
     remaining = [c for c in df.columns if c not in ordered]
     df = df[ordered + remaining]
 
+    # Rename columns to human-friendly headers (original vs AI side-by-side)
+    df = df.rename(columns=COLUMN_HEADERS)
+
     buf = io.BytesIO()
     with pd.ExcelWriter(buf, engine="openpyxl") as writer:
         df.to_excel(writer, index=False, sheet_name="Triage_Results")
@@ -90,7 +106,7 @@ def _apply_styles(ws: Any, df: pd.DataFrame) -> None:
         col_names = list(df.columns)
         priority_col_idx = None
         for i, name in enumerate(col_names):
-            if name in ("AI_Priority", "Priority"):
+            if name in ("AI_Priority", "Original_Priority", "Priority"):
                 priority_col_idx = i + 1  # 1-based
                 break
 

@@ -22,6 +22,7 @@ async def get_kpi(session: AsyncSession = Depends(get_session)):
     )
     auto_routed = auto_result.scalar_one()
 
+    # Flagged = tickets currently pending review (excludes reviewed/Manual tickets)
     flagged_result = await session.execute(
         select(func.count()).where(Ticket.routing_status == "Flagged")
     )
@@ -32,8 +33,10 @@ async def get_kpi(session: AsyncSession = Depends(get_session)):
     )
     held = held_result.scalar_one()
 
+    # Human corrections = count of UNIQUE tickets that received a correction
+    # (prevents duplicate reviews inflating the count)
     feedback_result = await session.execute(
-        select(func.count()).select_from(Feedback)
+        select(func.count(func.distinct(Feedback.ticket_id))).select_from(Feedback)
     )
     total_feedback = feedback_result.scalar_one()
 

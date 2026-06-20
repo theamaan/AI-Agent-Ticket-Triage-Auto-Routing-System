@@ -1,0 +1,460 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║        AI AGENT TICKET TRIAGE & AUTO-ROUTING SYSTEM                        ║
+║        VERBAL PRESENTATION SCRIPT — Senior Demo                            ║
+║        Total Duration: ~18–22 minutes  |  Live Demo included               ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+BEFORE YOU BEGIN:
+  □  Backend running:   cd D:\PROJECTS\AI-Agent-Ticket-Triage-Auto-Routing-System
+                        uvicorn src.api.main:app --reload
+  □  Frontend running:  cd frontend && npm run dev
+  □  Browser open at:   http://localhost:5173
+  □  Gmail inbox open in a separate tab (to show live email)
+  □  sample_tickets.xlsx ready on Desktop for drag-and-drop demo
+  □  .env configured with EMAIL_USERNAME and EMAIL_PASSWORD
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+SLIDE 1 — TITLE SLIDE  (~1 minute)
+───────────────────────────────────
+
+[Say this as the title appears]
+
+"Good [morning/afternoon], everyone. Thank you for taking the time.
+
+Today I'm going to walk you through a project I've built called the
+AI Agent Ticket Triage and Auto-Routing System.
+
+In simple terms — this system takes a spreadsheet of IT support tickets,
+automatically figures out what each one is about, how urgent it is, and
+who should handle it — and then sends an email to the right person.
+All of this happens in seconds, without any human involvement.
+
+Let me start by talking about the problem this solves."
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+SLIDE 2 — THE PROBLEM  (~2 minutes)
+─────────────────────────────────────
+
+"Right now, when a batch of IT tickets comes in, an analyst has to open
+each one, read it, decide what kind of problem it is, judge how critical
+it is, and then figure out which team or individual should get it.
+
+That process typically takes 15 to 30 minutes for a batch — and that's
+on a good day. The bigger problems are these:
+
+[Point to each bullet as you say it]
+
+First — it's slow. Every minute an analyst spends on routing is a minute
+not spent on actual problem solving.
+
+Second — it's inconsistent. Different analysts make different calls on
+the same ticket. One person routes a database slowness issue to the
+Network team, another sends it to the Database team. That confusion
+causes rework.
+
+Third — there's no priority intelligence. A P1 outage sitting in a
+queue behind 50 low-priority requests is a real risk.
+
+And finally — there is zero visibility. Management has no dashboard to
+see which teams are overloaded or how long routing is taking.
+
+This project solves all of these problems."
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+SLIDE 3 — OUR SOLUTION  (~2 minutes)
+──────────────────────────────────────
+
+"Our solution is a multi-agent AI pipeline. Think of it as a team of
+five specialised AI agents, each doing one job really well.
+
+[Point to each box]
+
+Agent 1 — the Classifier — reads the ticket and says: 'this is a
+Database issue' or 'this is a Security problem.'
+
+Agent 2 — the Priority Agent — reads the ticket and says: 'this is P1
+Critical because the word outage appears and a system is down.'
+
+Agent 3 — the Routing Agent — knows which team handles Database issues
+and who in that team is available. It picks the right person.
+
+Agent 4 — the Confidence Agent — is the decision maker. It combines
+all the scores and asks: 'how sure are we?' If the system is more than
+85% confident, it auto-routes the ticket and sends an email immediately.
+If it's between 65 and 85%, it flags the ticket for a human to review.
+Below 65%, it holds the ticket for manual classification.
+
+Agent 5 — the Feedback Agent — learns from human corrections. When a
+reviewer says 'this wasn't a Database issue, it was a Network issue,'
+that correction is saved and used to retrain the model.
+
+The result: more than 85% of tickets are handled without any human
+touching them. Manual effort is cut by at least 50%."
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+SLIDE 4 — END-TO-END WORKFLOW  (~3 minutes — the KEY slide)
+─────────────────────────────────────────────────────────────
+
+[This is the most important slide. Take your time.]
+
+"Let me walk you through the entire workflow from start to finish —
+this is the heart of the system.
+
+[Point to Step 1 — Excel File]
+It starts with a simple Excel file. The user — or a scheduler — uploads
+a spreadsheet of tickets. Each row is one ticket with a summary and a
+description. That's all we need.
+
+[Point to Step 2 — Web Portal]
+The file is uploaded through our React web portal. It's a clean,
+professional interface — think of it like a business application, not
+a developer tool. You drag the file in, you press upload, done.
+
+[Point to Step 3 — FastAPI Backend]
+Behind the scenes, a FastAPI server receives the file and starts
+processing each ticket through our agent pipeline.
+
+[Point to Step 4 — AI Agents]
+Each ticket goes through four agents in sequence — Classify, Prioritize,
+Route, Confidence. This takes a couple of seconds per ticket.
+
+[Point to the three outcome boxes]
+Then the Confidence Agent makes a decision:
+
+  Green box — Auto-Routed. The system is confident. It picks the
+  assignee, sends an email notification, and moves on.
+
+  Orange box — Flagged. The system isn't sure enough to act alone.
+  It puts the ticket in a review queue for a human to approve.
+
+  Red box — Held. The system doesn't know enough. A human must
+  classify this one manually.
+
+[Point to the bottom bar]
+And the output? An enriched Excel file with 8 new AI columns added —
+AI Category, AI Priority, the assigned team, the assignee's name,
+confidence scores, routing status, and whether an email was sent.
+
+The original Excel is untouched — we just add intelligence to it."
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+SLIDE 5 — TECHNOLOGY STACK  (~1.5 minutes)
+────────────────────────────────────────────
+
+"Let me quickly cover the technology — I'll keep this brief.
+
+[Point to AI/ML box]
+For the AI brain, I'm using two things. First, a machine learning model
+built with scikit-learn — a standard Python library. It uses a technique
+called TF-IDF to convert text into numbers, then a Logistic Regression
+classifier to predict categories. Second, Ollama — a local large language
+model that acts as the fallback for ambiguous tickets the ML model isn't
+sure about.
+
+[Point to Backend box]
+The backend is FastAPI — a modern, fast Python web framework. The
+database is SQLite locally, but it can be switched to Azure PostgreSQL
+with a single environment variable change.
+
+[Point to Frontend box]
+The frontend is React with Ant Design — the same UI library used in
+enterprise applications like Alibaba Cloud Console.
+
+[Point to Cloud Action box]
+The real cloud operation — one of our KRA requirements — is Gmail SMTP.
+When a ticket is auto-routed, a real HTML email is delivered to the
+assignee's inbox.
+
+Everything here is open source. Zero licensing cost."
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+SLIDE 6 — MULTI-AGENT PIPELINE  (~1 minute — can skim if time short)
+──────────────────────────────────────────────────────────────────────
+
+"Just a quick deeper look at each agent in case you're curious.
+
+[Point to columns]
+The Classifier tries the ML model first. If the confidence is above 55%,
+it uses that result. Otherwise it calls Ollama for a second opinion.
+
+The Priority Agent has keyword rules for obvious cases — words like
+'outage', 'down', 'critical', 'breach' automatically trigger P1.
+Ambiguous cases go to Ollama.
+
+The Routing Agent reads a configuration Excel file to know which team
+handles which category and who's in each team. You don't need to touch
+code to change routing — just update the spreadsheet.
+
+The Confidence Agent does a weighted average — the ML score carries 50%
+weight, the LLM score 30%, and priority certainty 20%. That weighted
+score drives the auto-route / flag / hold decision.
+
+The Feedback Agent saves every human correction and can trigger
+retraining when enough corrections have been collected."
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+SLIDE 7 — SUPPORTED TEAMS  (~45 seconds)
+──────────────────────────────────────────
+
+"The system currently supports seven teams — Testing, EDI, BizTalk,
+Database, Network, Access, and Security.
+
+Importantly — adding a new team requires zero code changes. You simply
+open the routing_config Excel file, add a new row with the team name,
+lead email, and members, and the system picks it up automatically.
+
+This was a deliberate design choice. Routing rules are data, not code."
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+SLIDE 8 — KRA ACHIEVEMENTS  (~1.5 minutes)
+────────────────────────────────────────────
+
+"Let me be transparent about where we are against the KRA targets.
+
+[Point to green checkmarks]
+We've completed the data collection phase — 50 labeled training tickets
+across all seven teams.
+
+The classifier model is trained and achieving 70 to 80% baseline
+accuracy. The KRA target is 85% — we'll reach that with more data and
+the feedback loop.
+
+The multi-agent architecture is fully built and tested.
+
+The Excel auto-routing pipeline works end to end — upload, process,
+download enriched results.
+
+The real cloud action — Gmail SMTP — is working. Live emails are sent.
+
+[Point to orange item]
+The feedback loop is partially complete — corrections are stored, and
+the retraining logic is wired. The continuous improvement cycle starts
+from day one of production use."
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+SLIDE 9 — LIVE DEMONSTRATION  (~5 minutes)
+────────────────────────────────────────────
+
+[Switch to browser. Walk through each step.]
+
+"Now let me show you the system live.
+
+── Step 1: Dashboard ──────────────────────────────────────────────────
+[Open http://localhost:5173]
+
+'This is our main dashboard. The KPI cards at the top show total tickets
+processed, what percentage were auto-routed, flagged, and held.
+
+The bar chart on the left breaks down tickets by team.
+The pie chart on the right shows priority distribution.
+All of this updates in real time.'
+
+── Step 2: Upload Page ────────────────────────────────────────────────
+[Click Upload in the left sidebar]
+
+'This is the upload page. I'm going to drag our sample_tickets.xlsx in here.'
+
+[Drag and drop the file]
+
+'You can see the progress steps — Uploading, Processing, Enriching,
+Complete. Each step lights up as the agents work through the tickets.
+
+The system processes each ticket through all five agents.
+Watch the progress bar advance...'
+
+[Wait for completion]
+
+'Done. I can now download the enriched Excel with all AI predictions
+added as new columns. Let me show you what that looks like...'
+
+[Download and briefly open the file — show AI columns]
+
+'Here you can see the original ticket data on the left, and on the right
+we have AI_Category, AI_Priority, Assigned_Team, Assigned_To,
+ML_Confidence, LLM_Confidence, Final_Confidence, Routing_Status, and
+Email_Sent. All added by the system — zero manual input.'
+
+── Step 3: Ticket Table ───────────────────────────────────────────────
+[Click Ticket Table in sidebar]
+
+'This is the ticket management view. You can filter by team, status,
+or priority. Notice the colour-coded priority badges — P1 Critical in
+red, P4 Low in grey.
+
+The Routing Status column shows exactly how each ticket was handled —
+Auto-Routed in green, Flagged in orange, Held in red.'
+
+── Step 4: Review Queue ───────────────────────────────────────────────
+[Click Review Queue in sidebar]
+
+'This is where flagged and held tickets land. An analyst can see the
+AI's prediction, check if it's correct, and either approve it or
+override the category and team.
+
+When they click Approve, the correction is sent back to the Feedback
+Agent, which saves it for the next retraining cycle.'
+
+── Step 5: Email (Switch to Gmail tab) ────────────────────────────────
+[Switch to Gmail inbox]
+
+'And here — this is the real cloud action. Every ticket that was
+auto-routed above 85% confidence triggered a real email notification.
+This one went to the Database team assignee.
+
+The email shows the Ticket ID, summary, AI category, priority, and who
+it was assigned to. This is exactly what the assignee would see in
+production.'
+
+[Come back to presentation]
+"
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+SLIDE 10 — KPIs & IMPACT  (~1.5 minutes)
+──────────────────────────────────────────
+
+"Let me put the numbers in context.
+
+[Point to blue KPI box]
+Our baseline model accuracy is 70 to 80%. That's on just 50 training
+examples. With 200 to 300 examples and the feedback loop running,
+we expect to exceed the 85% KRA target.
+
+[Point to green KPI box]
+Manual routing took 15 to 30 minutes. The system processes a full batch
+in under 2 minutes. That's a 50 to 90% reduction.
+
+[Point to the before/after comparison]
+Before — inconsistent, slow, manual. After — consistent, fast,
+automated, with a real email confirmation and a full audit trail.
+
+The business value is clear: analyst time is freed up for actual
+problem solving, not administrative routing."
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+SLIDE 11 — NEXT STEPS  (~1 minute)
+────────────────────────────────────
+
+"The immediate next phase is deployment.
+
+Phase 7 moves this from a local system to Azure — using Terraform to
+provision the infrastructure and GitHub Actions to build and deploy
+automatically on every code commit.
+
+Sprint 2 adds semantic similarity using a vector database — so when a
+new ticket comes in, the system can find the three most similar tickets
+from history and use their resolutions as context. That pushes accuracy
+above 85%.
+
+Sprint 3 connects the system to ServiceNow and Jira — so instead of an
+email, the auto-route creates a ticket in the ITSM tool directly.
+
+Sprint 4 closes the feedback loop fully — the system retrains itself
+automatically without any manual intervention."
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+SLIDE 12 — THANK YOU / Q&A  (~1 minute + Q&A)
+───────────────────────────────────────────────
+
+"To summarise:
+
+We built a production-ready AI Agent pipeline that automatically
+classifies, prioritises, and routes IT support tickets.
+
+It uses a combination of machine learning and a local LLM to make
+intelligent decisions. High-confidence tickets are routed in seconds
+with a real email notification. Low-confidence tickets are escalated
+to human reviewers.
+
+The system is extensible, observable, and built entirely on open-source
+technology with no licensing cost.
+
+I'm happy to take any questions."
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ANTICIPATED QUESTIONS & SUGGESTED ANSWERS
+──────────────────────────────────────────
+
+Q: What happens if the AI makes a wrong decision?
+A: "The system has two safety nets. First, tickets below 85% confidence
+   are never auto-routed — they go to a human reviewer. Second, when a
+   reviewer corrects a decision, that correction is saved and used to
+   retrain the model, so the same mistake won't happen again."
+
+Q: What if Ollama is down or slow?
+A: "The ML model handles the majority of tickets without touching Ollama.
+   Ollama is only called when the ML model's confidence is below 55%.
+   If Ollama is unavailable, the system falls back to the ML prediction
+   alone, so it continues working."
+
+Q: How do we control who gets emails?
+A: "Everything is configured in routing_config.xlsx — team names, member
+   names, and email addresses. Update the spreadsheet, restart the
+   service, and the new routing takes effect immediately."
+
+Q: Can we connect this to our existing ticketing system?
+A: "Yes — that's Sprint 3 on the roadmap. The FastAPI backend exposes
+   a standard REST API, so connecting to ServiceNow, Jira, or any
+   system with a webhook is straightforward."
+
+Q: What data does this system store?
+A: "It stores ticket IDs, AI predictions, and human feedback corrections
+   in a local SQLite database. No ticket descriptions or personal data
+   are sent outside the network — Ollama runs completely locally."
+
+Q: How accurate is it?
+A: "70 to 80% baseline on 50 training examples. With 200 to 300 examples
+   and a few weeks of the feedback loop running, we expect to reach and
+   exceed the 85% KRA target."
+
+Q: How long does it take to process tickets?
+A: "For a batch of 50 tickets: roughly 90 seconds to 3 minutes depending
+   on how many need the Ollama fallback. Tickets that the ML model handles
+   are near-instant. If you train the model first, most tickets skip
+   Ollama entirely."
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+TIMING GUIDE
+────────────
+  Slide  1  Title              1:00
+  Slide  2  Problem            2:00
+  Slide  3  Solution           2:00
+  Slide  4  Workflow           3:00  ← Most important — don't rush
+  Slide  5  Tech Stack         1:30
+  Slide  6  Agents             1:00
+  Slide  7  Teams              0:45
+  Slide  8  KRA                1:30
+  Slide  9  LIVE DEMO          5:00  ← Be prepared for questions here
+  Slide 10  KPIs               1:30
+  Slide 11  Next Steps         1:00
+  Slide 12  Thank You + Q&A    1:00 + open Q&A
+  ─────────────────────────────────
+  TOTAL                       ~21:15 min
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

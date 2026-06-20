@@ -36,14 +36,18 @@ async def submit_feedback(
     if not ticket:
         raise HTTPException(status_code=404, detail=f"Ticket '{body.ticket_id}' not found.")
 
-    fb = await save_feedback(
-        session=session,
-        ticket_db_id=ticket.id,
-        corrected_category=body.corrected_category,
-        corrected_priority=body.corrected_priority,
-        corrected_team=body.corrected_team,
-        corrected_assignee=body.corrected_assignee,
-        reviewer=body.reviewer,
-        notes=body.notes,
-    )
+    try:
+        fb = await save_feedback(
+            session=session,
+            ticket_db_id=ticket.id,
+            corrected_category=body.corrected_category,
+            corrected_priority=body.corrected_priority,
+            corrected_team=body.corrected_team,
+            corrected_assignee=body.corrected_assignee,
+            reviewer=body.reviewer,
+            notes=body.notes,
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=409, detail=str(exc))
+
     return {"message": "Feedback saved.", "feedback_id": fb.id}

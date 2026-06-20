@@ -14,9 +14,12 @@ const ReviewQueuePage: React.FC = () => {
   const [loading, setLoading] = useState(false)
   const [corrections, setCorrections] = useState<Record<number, { team?: string; priority?: string }>>({})
   const [submitting, setSubmitting] = useState<Record<number, boolean>>({})
+  // Track locally-reviewed ticket IDs to prevent re-submission before next reload
+  const [reviewed, setReviewed] = useState<Set<number>>(new Set())
 
   const loadFlagged = () => {
     setLoading(true)
+    setReviewed(new Set()) // reset reviewed set on full reload
     Promise.all([
       fetchTickets(1, 200, 'Flagged'),
       fetchTickets(1, 200, 'Held'),
@@ -32,6 +35,10 @@ const ReviewQueuePage: React.FC = () => {
   }
 
   const approve = async (row: TicketRow) => {
+    if (reviewed.has(row.id)) {
+      message.warning(`Ticket ${row.ticket_id} has already been reviewed.`)
+      return
+    }
     setSubmitting(prev => ({ ...prev, [row.id]: true }))
     try {
       await submitFeedback({
@@ -41,10 +48,19 @@ const ReviewQueuePage: React.FC = () => {
         reviewer: 'Manual Review',
         notes: 'Approved from Review Queue',
       })
-      message.success(`Ticket ${row.ticket_id} approved.`)
-      loadFlagged()
-    } catch {
-      message.error('Failed to submit feedback.')
+      message.success(`Ticket ${row.ticket_id} reviewed and removed from queue.`)
+      // Optimistically remove from list and mark as reviewed
+      setReviewed(prev => new Set([...prev, row.id]))
+      setData(prev => prev.filter(t => t.id !== row.id))
+    } catch (err: any) {
+      // 409 = already reviewed on the server side
+      if (err?.response?.status === 409) {
+        message.warning(`Ticket ${row.ticket_id} was already reviewed. Removing from queue.`)
+        setReviewed(prev => new Set([...prev, row.id]))
+        setData(prev => prev.filter(t => t.id !== row.id))
+      } else {
+        message.error('Failed to submit feedback.')
+      }
     } finally {
       setSubmitting(prev => ({ ...prev, [row.id]: false }))
     }
@@ -112,9 +128,10 @@ const ReviewQueuePage: React.FC = () => {
           type="primary"
           size="small"
           loading={submitting[row.id]}
+          disabled={reviewed.has(row.id)}
           onClick={() => approve(row)}
         >
-          Approve
+          {reviewed.has(row.id) ? 'Reviewed' : 'Approve'}
         </Button>
       ),
     },
