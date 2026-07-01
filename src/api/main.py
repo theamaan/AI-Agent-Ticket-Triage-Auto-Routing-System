@@ -8,9 +8,12 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from prometheus_client import make_asgi_app
 
+from fastapi.responses import JSONResponse
+
 from src.config.settings import settings
 from src.database.connection import init_db
 from src.api.routes import tickets, feedback, metrics
+from src.pipeline.folder_runner import run_folder
 
 logging.basicConfig(
     level=logging.INFO,
@@ -24,6 +27,8 @@ async def lifespan(app: FastAPI):
     logger.info("Starting up — initialising database …")
     await init_db()
     logger.info("Database ready.")
+    logger.info("Scanning input/ folder for Excel files …")
+    await run_folder()
     yield
     logger.info("Shutting down.")
 
@@ -56,3 +61,14 @@ app.include_router(metrics.router, prefix="/metrics", tags=["Metrics"])
 @app.get("/health", tags=["Health"])
 async def health() -> dict:
     return {"status": "ok"}
+
+
+@app.post("/api/run", tags=["Folder Runner"])
+async def run_now() -> JSONResponse:
+    """
+    Manually trigger the folder runner.
+    Processes all .xlsx files currently in the input/ folder,
+    writes enriched results to output/, and moves originals to input/processed/.
+    """
+    result = await run_folder()
+    return JSONResponse(content=result)

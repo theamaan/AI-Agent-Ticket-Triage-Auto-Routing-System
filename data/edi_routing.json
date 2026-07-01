@@ -1,0 +1,51 @@
+{
+  "team": "EDI Team",
+  "team_lead_email": "",
+  "members": [
+    {
+      "name": "Ulavapati Haritha",
+      "email": "",
+      "keywords": ["mmw", "ssis", "ssrs"]
+    },
+    {
+      "name": "Gopichand Karumuri",
+      "email": "",
+      "keywords": ["27x", "servicebus", "dotnet upgrade"]
+    },
+    {
+      "name": "Sindhura Bayapureddy",
+      "email": "",
+      "keywords": ["eutf", "pex", "834", "835", "tumbleweed"]
+    },
+    {
+      "name": "Nawin Udhayakumar",
+      "email": "",
+      "keywords": ["biztalk", "dsvalid", "dsinvalid"]
+    },
+    {
+      "name": "Arunkumar Kumarasamy",
+      "email": "",
+      "keywords": ["meg", "tidal"]
+    },
+    {
+      "name": "Ganti Sri Harshini",
+      "email": "",
+      "keywords": ["mcg", "ecrtp", "crtp"]
+    },
+    {
+      "name": "Pretheeba Udayakumar",
+      "email": "",
+      "keywords": ["captiva", "ack service"]
+    },
+    {
+      "name": "Saivardhan Manikonda",
+      "email": "",
+      "keywords": ["initial 999", "837"]
+    },
+    {
+      "name": "Sankalp Maheshwari",
+      "email": "",
+      "keywords": ["final 999", "277ca", "x12data"]
+    }
+  ]
+}

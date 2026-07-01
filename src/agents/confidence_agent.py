@@ -13,31 +13,44 @@ def compute_confidence(
     priority_confidence: float,
 ) -> float:
     """
-    Weighted average of available confidence signals.
-    Weights: ML=0.5, LLM=0.3, Priority=0.2
-    Falls back gracefully if any signal is unavailable.
+    Compute a weighted confidence score based on which classifier was used.
+
+    Two paths:
+
+    Path A — LLM was used as the primary/fallback classifier
+    (llm_confidence is not None):
+        The ML score that triggered the LLM fallback was already below the
+        reliability threshold.  Including that low score at 50% weight would
+        overwhelm the LLM's confident answer.  Exclude it entirely and give
+        the LLM the dominant weight.
+            score = llm_confidence × 0.70 + priority_confidence × 0.30
+
+    Path B — ML model was used alone (llm_confidence is None):
+        ML prediction was strong enough (≥ 0.55).  Give ML the dominant weight.
+            score = ml_confidence × 0.80 + priority_confidence × 0.20
+
+    Example (why the old formula failed):
+        ml=0.35 (below threshold, LLM fallback), llm=0.70, priority=0.92
+        OLD: (0.35×0.5 + 0.70×0.3 + 0.92×0.2) / 1.0 = 0.569  → Flagged
+        NEW: 0.70×0.70 + 0.92×0.30               = 0.766  → Auto-Routed ✅
     """
-    scores: list[tuple[float, float]] = []
+    if llm_confidence is not None:
+        # Path A: LLM was the effective classifier
+        return round(llm_confidence * 0.70 + priority_confidence * 0.30, 4)
 
     if ml_confidence is not None:
-        scores.append((ml_confidence, 0.5))
-    if llm_confidence is not None:
-        scores.append((llm_confidence, 0.3))
-    scores.append((priority_confidence, 0.2))
+        # Path B: ML was the sole classifier
+        return round(ml_confidence * 0.80 + priority_confidence * 0.20, 4)
 
-    total_weight = sum(w for _, w in scores)
-    if total_weight == 0:
-        return 0.5
-
-    weighted_sum = sum(v * w for v, w in scores)
-    return round(weighted_sum / total_weight, 4)
+    # No signals at all — neutral score
+    return 0.50
 
 
 def decide_routing_status(confidence: float) -> str:
     """
     Apply configured thresholds:
-      > CONFIDENCE_AUTO_ROUTE  → "Auto-Routed"
-      > CONFIDENCE_FLAG        → "Flagged"
+      ≥ CONFIDENCE_AUTO_ROUTE  → "Auto-Routed"
+      ≥ CONFIDENCE_FLAG        → "Flagged"
       else                     → "Held"
     """
     if confidence >= settings.confidence_auto_route:

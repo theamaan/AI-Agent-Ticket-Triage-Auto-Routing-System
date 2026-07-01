@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import io
 import logging
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 
@@ -60,9 +61,12 @@ def read_tickets(file_bytes: bytes, filename: str = "upload.xlsx") -> list[dict]
         if col in df.columns:
             df[col] = df[col].fillna("").astype(str)
 
-    # Generate Ticket_ID if missing
+    # Generate Ticket_ID if missing.
+    # Include a batch timestamp so each upload produces unique IDs and
+    # never collides with tickets already stored in the database.
     if "Ticket_ID" not in df.columns or df["Ticket_ID"].str.strip().eq("").all():
-        df["Ticket_ID"] = [f"TKT-{i+1:05d}" for i in range(len(df))]
+        batch_ts = datetime.utcnow().strftime("%Y%m%d%H%M%S")
+        df["Ticket_ID"] = [f"TKT-{batch_ts}-{i+1:04d}" for i in range(len(df))]
 
     return df.to_dict("records")
 
