@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import secrets
 from datetime import datetime
 from typing import Any
 
@@ -55,7 +56,16 @@ class Orchestrator:
             llm_confidence=classification.get("llm_confidence"),
             priority_confidence=priority_result["priority_confidence"],
         )
-        routing_status = decide_routing_status(final_confidence)
+
+        # ── Routing status ────────────────────────────────────────────────────
+        # Non-EDI teams → mark as Recommendation; approver confirms via email link.
+        # EDI Team      → use confidence thresholds as before.
+        if routing["team"] != "EDI Team":
+            routing_status = "Recommendation"
+            approval_token: str | None = secrets.token_urlsafe(32)
+        else:
+            routing_status = decide_routing_status(final_confidence)
+            approval_token = None
 
         result: dict[str, Any] = {
             **raw,
@@ -69,11 +79,12 @@ class Orchestrator:
             "LLM_Confidence": classification.get("llm_confidence"),
             "Final_Confidence": final_confidence,
             "Routing_Status": routing_status,
+            "Approval_Token": approval_token,
             "Email_Sent": False,
             "processed_at": datetime.utcnow().isoformat(),
         }
 
-        # ── Email notification (only for auto-routed) ─────────────────────────
+        # ── Email notification (EDI auto-routed only) ─────────────────────────
         if routing_status == "Auto-Routed" and routing["assignee_email"]:
             sent = email_service.send_auto_route_notification(
                 to_email=routing["assignee_email"],
@@ -109,6 +120,11 @@ class Orchestrator:
             lead_emails = {r.get("Team_Lead_Email") for r in flagged if r.get("Team_Lead_Email")}
             for lead_email in lead_emails:
                 email_service.send_flagged_digest(lead_email, digest_sample)
+
+        # Send one approval email for all non-EDI recommendation tickets
+        recommendations = [r for r in results if r.get("Routing_Status") == "Recommendation"]
+        if recommendations:
+            email_service.send_recommendation_approval_email(recommendations)
 
         return results
 
@@ -150,6 +166,7 @@ class Orchestrator:
                 final_confidence=r.get("Final_Confidence"),
                 routing_status=r.get("Routing_Status"),
                 email_sent=bool(r.get("Email_Sent", False)),
+                approval_token=r.get("Approval_Token"),
                 processed_at=datetime.utcnow(),
             )
             session.add(ticket)

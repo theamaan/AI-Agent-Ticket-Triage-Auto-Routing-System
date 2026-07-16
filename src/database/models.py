@@ -23,10 +23,12 @@ class Base(DeclarativeBase):
 
 
 class RoutingStatus(str, enum.Enum):
-    AUTO_ROUTED = "Auto-Routed"
-    FLAGGED = "Flagged"
-    HELD = "Held"
-    MANUAL = "Manual"
+    AUTO_ROUTED    = "Auto-Routed"
+    FLAGGED        = "Flagged"
+    HELD           = "Held"
+    MANUAL         = "Manual"
+    RECOMMENDATION = "Recommendation"   # non-EDI team — pending human approval
+    APPROVED       = "Approved"         # recommendation confirmed by approver
 
 
 class Ticket(Base):
@@ -61,6 +63,9 @@ class Ticket(Base):
 
     # Notifications
     email_sent: Mapped[bool] = mapped_column(Boolean, default=False)
+
+    # Approval workflow (non-EDI recommendations)
+    approval_token: Mapped[Optional[str]] = mapped_column(String(64), nullable=True)
 
     # Metadata
     created_at: Mapped[datetime] = mapped_column(

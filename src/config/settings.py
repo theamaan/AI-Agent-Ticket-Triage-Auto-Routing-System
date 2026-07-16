@@ -58,6 +58,12 @@ class Settings(BaseSettings):
     # ── Feedback ──────────────────────────────────────────────────────────────
     feedback_retrain_threshold: int = 20
 
+    # ── Approval workflow ─────────────────────────────────────────────────────
+    # Email address that receives team-recommendation approval requests
+    approval_email: str = ""
+    # Base URL used to build approve-links inside emails (no trailing slash)
+    api_base_url: str = "http://localhost:8000"
+
     @property
     def cors_origins_list(self) -> List[str]:
         return [o.strip() for o in self.cors_origins.split(",") if o.strip()]
